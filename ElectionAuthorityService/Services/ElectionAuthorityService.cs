@@ -1,19 +1,12 @@
 using TrustedVoteLibrary.Utils;
 namespace ElectionAuthorityService.Services;
 
-public class ElectionAuthorityService : IHostedService, IDisposable
+public class ElectionAuthorityService(Serilog.ILogger logger) : IHostedService, IDisposable
 {
-
-    private readonly Serilog.ILogger _logger;
     private IConnection connection;
     private IJetStreamPullSubscription subscription;
     private Timer timer;
     
-    public ElectionAuthorityService(Serilog.ILogger logger)
-    {
-        _logger = logger;
-    }
-
     public Task StartAsync(CancellationToken cancellationToken)
     {
         Log.Information("ElectionAuthorityService is starting.");
@@ -26,8 +19,8 @@ public class ElectionAuthorityService : IHostedService, IDisposable
         options.Url = "nats://localhost:4222"; // NATS server URL
 
         connection = new ConnectionFactory().CreateConnection(options);
-        _logger.Information("before checking for stream");
-        JetStreamUtils.EnsureStreamExists(connection, "VoterRegistrationStream", "election.voter.register", _logger);
+        logger.Information("before checking for stream");
+        JetStreamUtils.EnsureStreamExists(connection, "VoterRegistrationStream", "election.voter.register", logger);
         IJetStream js = connection.CreateJetStreamContext();
 
         // Subscribe to the JetStream subject with a durable subscription
@@ -41,7 +34,7 @@ public class ElectionAuthorityService : IHostedService, IDisposable
 
     private void ProcessMessages(object state)
     {
-        _logger.Information("Checking for messages...");
+        logger.Information("Checking for messages...");
 
         try
         {
@@ -61,12 +54,12 @@ public class ElectionAuthorityService : IHostedService, IDisposable
 
                     if (VerifySignature(jsonPayload, signature, rsa))
                     {
-                        _logger.Information("Signature verified! Valid payload.");
-                        _logger.Information($"Payload: {jsonPayload}");
+                        logger.Information("Signature verified! Valid payload.");
+                        logger.Information($"Payload: {jsonPayload}");
                     }
                     else
                     {
-                        _logger.Warning("Signature verification failed.");
+                        logger.Warning("Signature verification failed.");
                     }
                 }
 
@@ -76,7 +69,7 @@ public class ElectionAuthorityService : IHostedService, IDisposable
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Error while processing messages.");
+            logger.Error(ex, "Error while processing messages.");
         }
     }
 
@@ -90,7 +83,7 @@ public class ElectionAuthorityService : IHostedService, IDisposable
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
-        _logger.Information("ElectionAuthorityService is stopping.");
+        logger.Information("ElectionAuthorityService is stopping.");
         timer?.Change(Timeout.Infinite, 0);
         connection?.Dispose();
         return Task.CompletedTask;
