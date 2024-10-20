@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35208.52
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrustVotingCLI", "TrustVotingCLI\TrustVotingCLI.csproj", "{5083A9D0-DE6C-4CDB-863C-32DEA2E2142E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrustVotingCLI.Core", "TrustVotingCLI.Core\TrustVotingCLI.Core.csproj", "{5083A9D0-DE6C-4CDB-863C-32DEA2E2142E}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrustedVoteLibrary", "TrustedVoteLibrary\TrustedVoteLibrary.csproj", "{73FAAF23-E701-43EC-9BBE-FB3A2197A027}"
 EndProject
@@ -14,21 +14,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElectionAuthorityService", "ElectionAuthorityService\ElectionAuthorityService.csproj", "{EEA8CA14-D342-4FC6-80FE-0837B7A31025}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ElectionAuthorityService.Core", "ElectionAuthorityService.Core\ElectionAuthorityService.Core.csproj", "{EEA8CA14-D342-4FC6-80FE-0837B7A31025}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoterRegistrarServer", "VoterRegistrarServer\VoterRegistrarServer.csproj", "{914ADDCB-7F30-44F8-8994-104CDAFED8A9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoterRegistrarServer.Core", "VoterRegistrarServer.Core\VoterRegistrarServer.Core.csproj", "{914ADDCB-7F30-44F8-8994-104CDAFED8A9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BallotCertificateServer", "BallotCertificateServer\BallotCertificateServer.csproj", "{A002EEB3-203D-468A-A87E-694D38F96148}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BallotCertificateServer.Core", "BallotCertificateServer.Core\BallotCertificateServer.Core.csproj", "{A002EEB3-203D-468A-A87E-694D38F96148}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EBallotServer", "EBallotServer\EBallotServer.csproj", "{33640932-631D-4DFA-9DAD-E63780C3F9C9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EBallotServer.Core", "EBallotServer.Core\EBallotServer.Core.csproj", "{33640932-631D-4DFA-9DAD-E63780C3F9C9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseService", "DatabaseService\DatabaseService.csproj", "{5CCFE63F-9FC7-47B8-BFCB-0421F5ADEC1A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DatabaseService.Core", "DatabaseService.Core\DatabaseService.Core.csproj", "{5CCFE63F-9FC7-47B8-BFCB-0421F5ADEC1A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoterCertificateServer", "VoterCertificateServer\VoterCertificateServer.csproj", "{1F185788-E3C9-4482-A684-C83319AE7916}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoterCertificateServer.Core", "VoterCertificateServer.Core\VoterCertificateServer.Core.csproj", "{1F185788-E3C9-4482-A684-C83319AE7916}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrustedVotingNatsLibrary", "TrustedVotingNatsLibrary\TrustedVotingNatsLibrary.csproj", "{A0CC5EEF-6C21-480C-A8B2-F3F989EF0082}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SandboxNATS", "SandboxNATS\SandboxNATS.csproj", "{AE69A785-0FDB-4247-9C58-48F4298B5B6B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CommonLibraries", "CommonLibraries", "{DAF37F8E-DFEA-4A9C-B6A5-D8C98A437C71}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -86,5 +88,9 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {127B718B-D520-4D97-AAAF-0F7C345CD61A}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{73FAAF23-E701-43EC-9BBE-FB3A2197A027} = {DAF37F8E-DFEA-4A9C-B6A5-D8C98A437C71}
+		{A0CC5EEF-6C21-480C-A8B2-F3F989EF0082} = {DAF37F8E-DFEA-4A9C-B6A5-D8C98A437C71}
 	EndGlobalSection
 EndGlobal
