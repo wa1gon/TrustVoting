@@ -1,3 +1,5 @@
+using FluentResults;
+
 namespace TrustedVotingLibraryTest;
 
 [TestClass]
@@ -9,8 +11,7 @@ public class CATest
         // Arrange
 
         string guid = Guid.NewGuid().ToString();
-
-
+        
         using (RSA rsa = RSA.Create())
         {
             var caInfo = new CACertInfo()
@@ -25,14 +26,14 @@ public class CATest
             };
             // Act
 
-            X509Certificate2 caCert = CertificateAuthority.GenerateCACertificate(caInfo);
+            Result<X509Certificate2> caCertResult = CertificateAuthority.GenerateCACertificate(caInfo);
 
             // Assert
-            Assert.IsNotNull(caCert, "Certificate should not be null");
-            var cn = caCert.GetSubjectValueByName("CN");
+            Assert.IsTrue(caCertResult.IsSuccess);
+            var cn = caCertResult.Value.GetSubjectValueByName("CN");
             Assert.AreEqual(cn, caInfo.CommonName, "Common Name ");
 
-            CertificateAuthority.SaveCertificateWithPrivateKey(caCert,"/tmp/testCA.pfx","kb1etc");
+            CertificateAuthority.SaveCertificateWithPrivateKey(caCertResult.Value,"/tmp/testCA.pfx","kb1etc");
         }
     }
 }

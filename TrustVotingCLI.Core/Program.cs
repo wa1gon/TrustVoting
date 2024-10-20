@@ -60,7 +60,12 @@ class Program
     {
         var caCert = CertificateAuthority.GenerateCACertificate(caCertInfo);
         string fullName = System.IO.Path.Combine(caCertInfo.CACertPath, caCertInfo.CACertFileName);
-        CertificateAuthority.SaveCertificateWithPrivateKey(caCert, fullName, caCertInfo.Password);
+        if (caCert.IsFailed)
+        {
+            Console.WriteLine($"Failed to create CA certificate: {caCert.Errors[0]}");
+            return;
+        }
+        CertificateAuthority.SaveCertificateWithPrivateKey(caCert.Value, fullName, caCertInfo.Password);
 
     }
 

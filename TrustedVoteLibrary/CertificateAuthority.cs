@@ -58,8 +58,16 @@ public class CertificateAuthority
     }
     public static Result SaveCertificateWithPrivateKey(X509Certificate2 certificate, string filePath, string password)
     {
-        // Export the certificate along with the private key as a PFX (PKCS#12)
-        byte[] certData = certificate.Export(X509ContentType.Pfx, password);
-        System.IO.File.WriteAllBytes(filePath, certData);
+        try
+        {
+            // Export the certificate along with the private key as a PFX (PKCS#12)
+            byte[] certData = certificate.Export(X509ContentType.Pfx, password);
+            File.WriteAllBytes(filePath, certData);
+            return  Result.Ok();
+        }
+        catch (Exception e)
+        {
+            return Result.Fail(e.Message);
+        }
     }
 }
