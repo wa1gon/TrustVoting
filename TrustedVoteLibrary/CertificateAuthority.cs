@@ -1,12 +1,18 @@
+using FluentResults;
+
 namespace TrustedVoteLibrary;
 
 public class CertificateAuthority
 {
-    public static X509Certificate2 GenerateCACertificate(CACertInfo info)
+    public static Result<X509Certificate2> GenerateCACertificate(CACertInfo info)
     {
         // Generate RSA Key Pair
         using (RSA rsa = RSA.Create(2048))
         {
+            try
+            {
+
+
             // Define the certificate subject
             var subject = info.GenerateSubject();
             var subjectName = new X500DistinguishedName(subject);
@@ -27,16 +33,30 @@ public class CertificateAuthority
             var caCert = req.CreateSelfSigned(DateTimeOffset.Now, DateTimeOffset.Now.AddYears(10));
 
             return caCert;
+            }
+            catch (Exception e)
+            {
+                return Result.Fail(e.Message);
+            }
         }
     }
 
-    public static void SaveCertificate(X509Certificate2 certificate, string filePath)
+    public static Result SaveCertificate(X509Certificate2 certificate, string filePath)
     {
-        // Export the certificate as a PFX (with private key) or CER (without private key)
-        byte[] certData = certificate.Export(X509ContentType.Pfx);
-        System.IO.File.WriteAllBytes(filePath, certData);
+        try
+        {
+            // Export the certificate as a PFX (with private key) or CER (without private key)
+            byte[] certData = certificate.Export(X509ContentType.Pfx);
+            System.IO.File.WriteAllBytes(filePath, certData);
+            return Result.Ok();
+        }
+        catch (Exception e)
+        {
+            return Result.Fail(e.Message);
+        }
+
     }
-    public static void SaveCertificateWithPrivateKey(X509Certificate2 certificate, string filePath, string password)
+    public static Result SaveCertificateWithPrivateKey(X509Certificate2 certificate, string filePath, string password)
     {
         // Export the certificate along with the private key as a PFX (PKCS#12)
         byte[] certData = certificate.Export(X509ContentType.Pfx, password);
