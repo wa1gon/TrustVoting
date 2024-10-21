@@ -1,8 +1,10 @@
+using FluentResults;
+
 namespace TrustedVoteLibrary.Utils;
 
 public  static class JetStreamUtils
 {
-    public static void EnsureStreamExists(IConnection connection, string streamName, string subject, ILogger logger)
+    public static Result EnsureStreamExists(IConnection connection, string streamName, string subject, ILogger logger)
     {
         try
         {
@@ -10,6 +12,7 @@ public  static class JetStreamUtils
             IJetStreamManagement jsm = connection.CreateJetStreamManagementContext();
             StreamInfo streamInfo = jsm.GetStreamInfo(streamName);
             // logger.LogInformation().LogInformation($"Stream '{streamName}' already exists.");
+            return Result.Ok();
         }
         catch (NATSJetStreamException ex)
         {
@@ -26,10 +29,12 @@ public  static class JetStreamUtils
                 jsm.AddStream(streamConfig);
 
                 logger.Information($"Stream '{streamName}' created successfully.");
+                return Result.Ok();
             }
             else
             {
                 logger.Error(ex, $"Error checking or creating stream '{streamName}'");
+                return Result.Fail(ex.Message);
             }
         }
     }

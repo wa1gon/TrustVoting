@@ -11,8 +11,7 @@ namespace TrustedVotingLibraryTest;
             // Arrange
 
             string guid = Guid.NewGuid().ToString();
-
-
+            
             using (RSA rsa = RSA.Create())
             {
                 var voteArea = new BallotCertInfo()
@@ -33,7 +32,7 @@ namespace TrustedVotingLibraryTest;
 
                 // Assert
                 Assert.IsNotNull(cert, "Certificate should not be null");
-                Assert.AreEqual(cert.GetSubjectValueByName("CN"), guid, "Common Name above guid");
-                Assert.AreEqual(cert.GetSubjectValueByName("E"), voteArea.Email, "Email should match"); }
+                Assert.AreEqual(cert.Value.GetSubjectValueByName("CN"), guid, "Common Name above guid");
+                Assert.AreEqual(cert.Value.GetSubjectValueByName("E"), voteArea.Email, "Email should match"); }
         }
     }

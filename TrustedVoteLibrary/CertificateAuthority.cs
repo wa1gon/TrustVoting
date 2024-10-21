@@ -1,5 +1,3 @@
-using FluentResults;
-
 namespace TrustedVoteLibrary;
 
 public class CertificateAuthority

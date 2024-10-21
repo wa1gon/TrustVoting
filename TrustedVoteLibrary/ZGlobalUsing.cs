@@ -5,4 +5,5 @@ global using System.Security.Cryptography.X509Certificates;
 global using System.Text;
 global using System.Collections.Generic;
 global using TrustedVoteLibrary.Utils;
+global using FluentResults;
 global using TrustedVoteLibrary.BallotModel;

@@ -20,23 +20,29 @@ public class CertificateManager
     /// <param name="ballotCertInfo"></param>
     /// <param name="rsa"></param>
     /// <returns></returns>
-    public static X509Certificate2 GenerateVoterCertificateWithExtensions(
+    public static Result<X509Certificate2> GenerateVoterCertificateWithExtensions(
         BallotCertInfo ballotCertInfo, RSA rsa)
     {
-        var subject = ballotCertInfo.GenerateSubject();
+        try
+        {
+            var subject = ballotCertInfo.GenerateSubject();
 
+            var request = new CertificateRequest($"{subject}",
+                rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
 
-        var request = new CertificateRequest($"{subject}",
-            rsa, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+            // Add the voting district as an extension
+            // var votingDistrictExtension = new X509Extension(
+            //     new Oid("1.2.3.4.5.6.7.8.1", "Voting District"), System.Text.Encoding.ASCII.GetBytes(votingDistrict),
+            //     false);
+            // request.CertificateExtensions.Add(votingDistrictExtension);
 
-        // Add the voting district as an extension
-        // var votingDistrictExtension = new X509Extension(
-        //     new Oid("1.2.3.4.5.6.7.8.1", "Voting District"), System.Text.Encoding.ASCII.GetBytes(votingDistrict),
-        //     false);
-        // request.CertificateExtensions.Add(votingDistrictExtension);
-
-        // Create the certificate
-        var certificate = request.CreateSelfSigned(DateTimeOffset.Now, DateTimeOffset.Now.AddYears(1));
-        return certificate;
+            // Create the certificate
+            var certificate = request.CreateSelfSigned(DateTimeOffset.Now, DateTimeOffset.Now.AddYears(1));
+            return certificate;
+        }
+        catch (Exception e)
+        {
+            return Result.Fail<X509Certificate2>(e.Message);
+        }
     }
 }

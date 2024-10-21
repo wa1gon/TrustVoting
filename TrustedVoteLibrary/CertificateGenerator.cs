@@ -1,37 +1,44 @@
 namespace TrustedVoteLibrary;
 public class CertificateGenerator
 {
-    public static X509Certificate2 CreateCertificate(BallotCertInfo ballot, X509Certificate2 caCert, RSA? caPrivateKey, 
+    public static Result<X509Certificate2> CreateCertificate(BallotCertInfo ballot, X509Certificate2 caCert, RSA? caPrivateKey, 
         int yearsValid = 1)
     {
-        // Generate RSA key pair for the new certificate
-        using (RSA rsa = RSA.Create(2048))
+        try
         {
-            // Create the certificate request
-            var req = new CertificateRequest(
-                new X500DistinguishedName(ballot.GenerateSubject()), 
-                rsa, 
-                HashAlgorithmName.SHA256, 
-                RSASignaturePadding.Pkcs1);
+            // Generate RSA key pair for the new certificate
+            using (RSA rsa = RSA.Create(2048))
+            {
+                // Create the certificate request
+                var req = new CertificateRequest(
+                    new X500DistinguishedName(ballot.GenerateSubject()), 
+                    rsa, 
+                    HashAlgorithmName.SHA256, 
+                    RSASignaturePadding.Pkcs1);
 
-            // Add extensions (optional)
-            req.CertificateExtensions.Add(new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, true));
-            req.CertificateExtensions.Add(new X509BasicConstraintsExtension(false, false, 0, false));
-            req.CertificateExtensions.Add(new X509SubjectKeyIdentifierExtension(req.PublicKey, false));
+                // Add extensions (optional)
+                req.CertificateExtensions.Add(new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, true));
+                req.CertificateExtensions.Add(new X509BasicConstraintsExtension(false, false, 0, false));
+                req.CertificateExtensions.Add(new X509SubjectKeyIdentifierExtension(req.PublicKey, false));
 
-            // Sign the request with the CA's private key
-            DateTimeOffset notBefore = DateTimeOffset.Now;
-            DateTimeOffset notAfter = notBefore.AddYears(yearsValid);
+                // Sign the request with the CA's private key
+                DateTimeOffset notBefore = DateTimeOffset.Now;
+                DateTimeOffset notAfter = notBefore.AddYears(yearsValid);
 
-            // Create a certificate signed by the CA
-            X509Certificate2 signedCert = req.Create(
-                caCert, 
-                notBefore, 
-                notAfter, 
-                new ReadOnlySpan<byte>(Guid.NewGuid().ToByteArray()));
+                // Create a certificate signed by the CA
+                X509Certificate2 signedCert = req.Create(
+                    caCert, 
+                    notBefore, 
+                    notAfter, 
+                    new ReadOnlySpan<byte>(Guid.NewGuid().ToByteArray()));
 
-            // Combine the new certificate with the private key and export it
-            return signedCert.CopyWithPrivateKey(rsa);
+                // Combine the new certificate with the private key and export it
+                return signedCert.CopyWithPrivateKey(rsa);
+            }            
+        }
+        catch (Exception e)
+        {
+            return Result.Fail(e.Message);
         }
     }
 }
